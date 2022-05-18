@@ -16,7 +16,7 @@ class Recipe extends Equatable {
 
   @override
   String toString() =>
-      'Recipe { id: $id, title: $title , ingredients: $ingredients, procedure: $procedure}';
+      'Recipe { id: $id, title: $title , ingredients: $ingredients, procedure: $procedure, imageBytes: $image}';
 
   Map<String, dynamic> toJson() {
     return {

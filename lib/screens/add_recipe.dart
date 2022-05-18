@@ -51,6 +51,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         ));
       }
       procedureController.text = recipe.procedure;
+      debugPrint("The recipe being edited is: $recipe");
     } else {
       ingredientControllers.add(IngredientControllers(
           TextEditingController(), TextEditingController()));
@@ -172,12 +173,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 String procedure = procedureController.text;
 
                 int response = -1;
-                Recipe recipe =
-                    Recipe(0, recipeName, imageAsBytes, ingredients, procedure);
-                if (widget.recipe == null) {
-                  response = await viewModel.addRecipe(recipe);
-                } else {
+                if (widget.recipe != null) {
+                  Recipe recipe = Recipe(widget.recipe!.id, recipeName,
+                      imageAsBytes, ingredients, procedure);
                   response = await viewModel.editRecipe(recipe);
+                } else {
+                  Recipe recipe = Recipe(
+                      0, recipeName, imageAsBytes, ingredients, procedure);
+                  response = await viewModel.addRecipe(recipe);
                 }
                 Navigator.of(context).pop();
                 if (response != -1) {

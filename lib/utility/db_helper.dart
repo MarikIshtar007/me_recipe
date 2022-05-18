@@ -90,7 +90,9 @@ class RecipeDatabase {
     var client = await db;
     try {
       var res = client.update(kRecipeTableName, recipe.toJson(),
-          where: "$kDbTableIdColumn = ?", whereArgs: [recipe.id]);
+          where: "$kDbTableIdColumn = ?",
+          whereArgs: [recipe.id],
+          conflictAlgorithm: ConflictAlgorithm.replace);
       return res;
     } catch (e) {
       debugPrint("Error in editing recipe: $e");
