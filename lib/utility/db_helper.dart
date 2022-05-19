@@ -67,7 +67,7 @@ class RecipeDatabase {
         var recipes = res.map((e) => Recipe.fromMap(e)).toList();
         return recipes;
       }
-      return null;
+      return [];
     } catch (err) {
       debugPrint("Error in fetching recipes: $err");
       return null;

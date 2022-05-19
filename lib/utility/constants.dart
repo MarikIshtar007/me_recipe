@@ -5,6 +5,9 @@ const String kAddRecipeAppBarText = "Add your own Recipe";
 const String kEditRecipeAppBarText = "Edit your Recipe";
 const String kEditRecipeMissingData = "Please fill out all details";
 const String kSomethingWentWrong = "Something went wrong";
+const String kEmptyRecipeList =
+    "So empty...\n\nAdd your recipes and get started !!";
+const String kEmptyRecipeSearchResult = "No matching results";
 const String kRecipeDatabaseName = "myrecipes.db";
 const String kRecipeTableName = "recipes";
 const String kIngredientSeparator = "*";

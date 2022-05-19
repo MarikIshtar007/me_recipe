@@ -38,6 +38,10 @@ class RecipeViewModel {
     _searchStatus.add(_localSearchStatus);
   }
 
+  bool isSearching() {
+    return _localSearchStatus == SearchStatus.SEARCHING;
+  }
+
   void searchRecipes(String queryText) {
     if (_recipes.hasValue) {
       List<Recipe> searchResult = [];
@@ -54,6 +58,7 @@ class RecipeViewModel {
 
   Future<void> getRecipes() async {
     var list = await recipeDatabase.fetchRecipes();
+    debugPrint("Whatever $list");
     if (list != null) {
       Resource resource = Resource<List<Recipe>>.success(list);
       _recipes.add(resource);

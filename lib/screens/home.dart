@@ -18,7 +18,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final RecipeViewModel _viewModel = locator<RecipeViewModel>();
-  bool isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
@@ -190,10 +189,8 @@ class _HomeState extends State<Home> {
           onTap: () {
             if (FocusManager.instance.primaryFocus?.hasFocus ?? false) {
               FocusManager.instance.primaryFocus?.unfocus();
-              if (isSearching) {
-                setState(() {
-                  isSearching = false;
-                });
+              if (_viewModel.isSearching()) {
+                _viewModel.toggleSearch();
               }
             }
           },
@@ -224,7 +221,9 @@ class _HomeState extends State<Home> {
                       if (recipes.isEmpty) {
                         return Center(
                           child: Text(
-                            "So empty...\n\nAdd your recipes and get started !!",
+                            _viewModel.isSearching()
+                                ? kEmptyRecipeSearchResult
+                                : kEmptyRecipeList,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               letterSpacing: 0.8,
