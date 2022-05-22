@@ -8,6 +8,26 @@ const String kSomethingWentWrong = "Something went wrong";
 const String kEmptyRecipeList =
     "So empty...\n\nAdd your recipes and get started !!";
 const String kEmptyRecipeSearchResult = "No matching results";
+const String kDatabaseHandleAppBarText = "Import or Export Database";
+const String kImportDatabaseText = "Import Someone's shared recipes";
+const String kExportDatabaseText = "Share your recipe database with others";
+const String kImportDatabaseButtonText = "Import Recipes";
+const String kExportDatabaseButtonText = "Export Recipes";
+const String kOverrideData = "Override Data";
+const String kOverrideConfirmationText =
+    "Are you sure you want to override data? This will remove all your existing recipes and is non-reversible. Don't come crying if this fails...";
+const String kOverrideFailureText =
+    "Override failed. You're lucky if your data survived";
+const String kDefeatAccpeted = "I accept defeat";
+const String kMergeData = "Merge Data";
+const String kMergeConfirmationText =
+    "Are you sure you want to merge data? This will add the recipes to your existing database. Duplicates may emerge.";
+const String kDefeatTitle = "Well well...";
+const String kMergeFailureText =
+    "Merge failed. Don't blame if the data is corrupted";
+const String kCancelAction = "Cancel";
+
+// Strings for DB CRUD Ops
 const String kRecipeDatabaseName = "myrecipes.db";
 const String kRecipeTableName = "recipes";
 const String kIngredientSeparator = "*";

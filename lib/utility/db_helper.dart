@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:me_recipe/models/recipe.dart';
 import 'package:me_recipe/utility/constants.dart';
+import 'package:me_recipe/utility/resource.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -45,32 +46,38 @@ class RecipeDatabase {
     _database = null;
   }
 
-  void _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    debugPrint(
-        'in upgrade --> oldVersion = $oldVersion newVersion = $newVersion');
-    deInit();
-  }
-
   Future<Database> init() async {
     Directory directory = await getApplicationDocumentsDirectory();
     String dbPath = join(directory.path, kRecipeDatabaseName);
-    var database = openDatabase(dbPath,
-        version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
+    var database = openDatabase(dbPath, version: 1, onCreate: _onCreate);
     return database;
   }
 
-  Future<List<Recipe>?> fetchRecipes() async {
+  Future<String> getDatabasePath() async {
+    try {
+      Directory directory = await getApplicationDocumentsDirectory();
+      String dbPath = join(directory.path, kRecipeDatabaseName);
+      return dbPath;
+    } catch (err) {
+      debugPrint("Error in getting db path: $err");
+      return "";
+    }
+  }
+
+  Future<Resource> fetchRecipes() async {
     try {
       var client = await db;
       var res = await client.query(kRecipeTableName);
       if (res.isNotEmpty) {
         var recipes = res.map((e) => Recipe.fromMap(e)).toList();
-        return recipes;
+        Resource<List<Recipe>> resource =
+            Resource<List<Recipe>>.success(recipes);
+        return resource;
       }
-      return [];
+      return Resource.success([]);
     } catch (err) {
       debugPrint("Error in fetching recipes: $err");
-      return null;
+      return Resource.failure("Error in fetching recipes: $err");
     }
   }
 
@@ -108,6 +115,52 @@ class RecipeDatabase {
       return res;
     } catch (e) {
       debugPrint("Error in deleting recipe: $e");
+      return kMethodError;
+    }
+  }
+
+  Future<Resource> fetchImportedRecipe(String path) async {
+    var newDb = await openDatabase(path);
+    try {
+      var res = await newDb.query(kRecipeTableName);
+      if (res.isNotEmpty) {
+        var recipes = res.map((e) => Recipe.fromMap(e)).toList();
+        Resource<List<Recipe>> resource =
+            Resource<List<Recipe>>.success(recipes);
+        return resource;
+      }
+      return Resource.success([]);
+    } catch (err) {
+      debugPrint("Error in fetching imported recipes: $err");
+      return Resource.failure("Error in fetching imported recipes: $err");
+    }
+  }
+
+  Future<int> overrideDatabase(List<Recipe> recipes) async {
+    var client = await db;
+    try {
+      client.delete(kRecipeTableName);
+      for (var recipe in recipes) {
+        client.insert(kRecipeTableName, recipe.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      return kMethodSuccess;
+    } catch (err) {
+      debugPrint("Error in overriding database: $err");
+      return kMethodError;
+    }
+  }
+
+  Future<int> mergeDatabase(List<Recipe> recipes) async {
+    var client = await db;
+    try {
+      for (var recipe in recipes) {
+        client.insert(kRecipeTableName, recipe.toJson(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      return kMethodSuccess;
+    } catch (err) {
+      debugPrint("Error in merging database: $err");
       return kMethodError;
     }
   }

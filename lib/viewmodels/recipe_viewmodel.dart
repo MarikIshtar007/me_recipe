@@ -18,6 +18,7 @@ class RecipeViewModel {
   BehaviorSubject<Resource> get recipes => _recipes;
   SearchStatus _localSearchStatus = SearchStatus.NOT_SEARCHING;
   final List<Recipe> _recipeSearchSnapshot = [];
+  final List<Recipe> _importedRecipes = [];
 
   late final RecipeDatabase recipeDatabase;
 
@@ -57,14 +58,8 @@ class RecipeViewModel {
   }
 
   Future<void> getRecipes() async {
-    var list = await recipeDatabase.fetchRecipes();
-    debugPrint("Whatever $list");
-    if (list != null) {
-      Resource resource = Resource<List<Recipe>>.success(list);
-      _recipes.add(resource);
-    } else {
-      _recipes.add(Resource.failure(kFetchRecipeFailure));
-    }
+    var response = await recipeDatabase.fetchRecipes();
+    _recipes.add(response);
   }
 
   Future<int> addRecipe(Recipe recipe) async {
@@ -97,5 +92,31 @@ class RecipeViewModel {
       await getRecipes();
       return kMethodSuccess;
     }
+  }
+
+  Future<String> exportDatabase() async {
+    String dbPath = await recipeDatabase.getDatabasePath();
+    return dbPath;
+  }
+
+  Future<Resource> fetchImportedRecipes(String dbPath) async {
+    Resource response = await recipeDatabase.fetchImportedRecipe(dbPath);
+    if (response.status == Status.success) {
+      _importedRecipes.clear();
+      _importedRecipes.addAll(response.data);
+    }
+    return response;
+  }
+
+  Future<int> overrideDatabase() async {
+    if (_importedRecipes.isEmpty) return kMethodError;
+    int response = await recipeDatabase.overrideDatabase(_importedRecipes);
+    return response;
+  }
+
+  Future<int> mergeDatabase() async {
+    if (_importedRecipes.isEmpty) return kMethodError;
+    int response = await recipeDatabase.mergeDatabase(_importedRecipes);
+    return response;
   }
 }

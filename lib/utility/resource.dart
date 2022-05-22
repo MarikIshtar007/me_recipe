@@ -1,7 +1,7 @@
 enum Status {
-  LOADING,
-  FAILED,
-  SUCCESS,
+  loading,
+  failed,
+  success,
 }
 
 class Resource<T> {
@@ -12,14 +12,14 @@ class Resource<T> {
   Resource(this.status, this.data);
 
   Resource.failure(this.errorMessage) {
-    status = Status.FAILED;
+    status = Status.failed;
   }
 
   Resource.success(this.data) {
-    status = Status.SUCCESS;
+    status = Status.success;
   }
 
   Resource.loading() {
-    status = Status.LOADING;
+    status = Status.loading;
   }
 }

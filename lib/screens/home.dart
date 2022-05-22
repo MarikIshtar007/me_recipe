@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:me_recipe/models/recipe.dart';
 import 'package:me_recipe/screens/add_recipe.dart';
+import 'package:me_recipe/screens/import_export_db.dart';
 import 'package:me_recipe/utility/constants.dart';
 import 'package:me_recipe/utility/get_it_locator.dart';
 import 'package:me_recipe/utility/resource.dart';
@@ -18,7 +19,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final RecipeViewModel _viewModel = locator<RecipeViewModel>();
-  final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
   @override
@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
         drawer: Drawer(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ListView(
               children: [
                 DrawerHeader(
@@ -66,6 +66,12 @@ class _HomeState extends State<Home> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return const ImportExportDb();
+                    }));
+                  },
                   tileColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.6),
                   title: Text(
@@ -201,21 +207,22 @@ class _HomeState extends State<Home> {
               stream: _viewModel.recipes,
               builder: (context, AsyncSnapshot<Resource> snapshot) {
                 if (snapshot.data != null) {
-                  Status status = snapshot.data?.status ?? Status.FAILED;
+                  Status status = snapshot.data?.status ?? Status.failed;
                   switch (status) {
-                    case Status.FAILED:
-                      return const Center(
-                          child: Text(
-                        kSomethingWentWrong,
-                        style: TextStyle(
-                          fontSize: 20,
+                    case Status.failed:
+                      return Center(
+                        child: Text(
+                          snapshot.data?.errorMessage ?? kSomethingWentWrong,
+                          style: const TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
-                      ));
-                    case Status.LOADING:
+                      );
+                    case Status.loading:
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
-                    case Status.SUCCESS:
+                    case Status.success:
                       List<Recipe> recipes =
                           snapshot.data?.data ?? [] as List<Recipe>;
                       if (recipes.isEmpty) {
