@@ -11,20 +11,28 @@ class RecipeViewModel {
   final BehaviorSubject<Resource> _recipes =
       BehaviorSubject.seeded(Resource.loading());
 
+  final BehaviorSubject<Resource> _bookmarkedRecipes =
+      BehaviorSubject.seeded(Resource.loading());
+
   final BehaviorSubject<SearchStatus> _searchStatus =
       BehaviorSubject.seeded(SearchStatus.NOT_SEARCHING);
 
   BehaviorSubject<SearchStatus> get searchStatus => _searchStatus;
   BehaviorSubject<Resource> get recipes => _recipes;
+  BehaviorSubject<Resource> get bookmarkedRecipes => _bookmarkedRecipes;
+
   SearchStatus _localSearchStatus = SearchStatus.NOT_SEARCHING;
   final List<Recipe> _recipeSearchSnapshot = [];
   final List<Recipe> _importedRecipes = [];
 
   late final RecipeDatabase recipeDatabase;
 
+  bool _outdated = true;
+
   RecipeViewModel() {
     recipeDatabase = RecipeDatabase();
     recipeDatabase.init();
+    _outdated = true;
   }
 
   void toggleSearch() {
@@ -77,8 +85,6 @@ class RecipeViewModel {
     if (response == kMethodError) {
       return response;
     } else {
-      debugPrint("Recipe edited: $recipe");
-      debugPrint("The number of changes made is $response");
       await getRecipes();
       return kMethodSuccess;
     }
@@ -118,5 +124,31 @@ class RecipeViewModel {
     if (_importedRecipes.isEmpty) return kMethodError;
     int response = await recipeDatabase.mergeDatabase(_importedRecipes);
     return response;
+  }
+
+  Future<int> bookmarkRecipe(int id, bool shouldBookmark) async {
+    int response = await recipeDatabase.bookmarkRecipe(id, shouldBookmark);
+    if (response == kMethodSuccess) {
+      List<Recipe> recipeList = recipes.value.data as List<Recipe>;
+      for (var recipe in recipeList) {
+        if (recipe.id == id) {
+          recipe.bookmark = shouldBookmark;
+          break;
+        }
+      }
+      _recipes.add(Resource.success(recipeList));
+      _outdated = true;
+    }
+    return response;
+  }
+
+  Future<void> getBookmarkedRecipes() async {
+    if (_outdated) {
+      debugPrint("How many times is this called? ");
+      List<Recipe> recipeList = recipes.value.data as List<Recipe>;
+      var finalList = recipeList.where((element) => element.bookmark).toList();
+      _bookmarkedRecipes.add(Resource.success(finalList));
+      _outdated = false;
+    }
   }
 }

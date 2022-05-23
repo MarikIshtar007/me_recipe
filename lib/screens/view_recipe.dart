@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:me_recipe/models/recipe.dart';
 import 'package:me_recipe/screens/add_recipe.dart';
 import 'package:me_recipe/utility/constants.dart';
+import 'package:me_recipe/utility/get_it_locator.dart';
+import 'package:me_recipe/viewmodels/recipe_viewmodel.dart';
 import 'package:me_recipe/widgets/ingredient_tile_widget.dart';
 
 class ViewRecipe extends StatefulWidget {
@@ -16,10 +18,14 @@ class ViewRecipe extends StatefulWidget {
 class _ViewRecipeState extends State<ViewRecipe> {
   List<String> procedureList = [];
   var selectedProcedureIdx = 0;
+  bool isBookMark = false;
+
+  final RecipeViewModel _viewModel = locator<RecipeViewModel>();
 
   @override
   void initState() {
     super.initState();
+    isBookMark = widget.recipe.bookmark;
     procedureList.addAll(widget.recipe.procedure.split("\n"));
   }
 
@@ -64,16 +70,65 @@ class _ViewRecipeState extends State<ViewRecipe> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Column(
                   children: [
-                    Container(
-                      child: Text(
-                        widget.recipe.title,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontSize:
-                              Theme.of(context).textTheme.headline5?.fontSize,
-                          fontWeight: FontWeight.w700,
+                    Row(
+                      children: [
+                        const Spacer(),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: Text(
+                            widget.recipe.title,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .headline5
+                                  ?.fontSize,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
+                        StatefulBuilder(
+                          builder: (context, setThisState) {
+                            return GestureDetector(
+                              onTap: () async {
+                                int response = await _viewModel.bookmarkRecipe(
+                                    widget.recipe.id, !isBookMark);
+                                if (response == kMethodSuccess) {
+                                  setThisState(() {
+                                    isBookMark = !isBookMark;
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          "Failed... Congrats! You broke the app."),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(
+                                  isBookMark
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
                     ),
                     Container(
                       margin: const EdgeInsets.only(

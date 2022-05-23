@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:me_recipe/models/recipe.dart';
 import 'package:me_recipe/screens/add_recipe.dart';
+import 'package:me_recipe/screens/bookmarks.dart';
 import 'package:me_recipe/screens/import_export_db.dart';
 import 'package:me_recipe/utility/constants.dart';
 import 'package:me_recipe/utility/get_it_locator.dart';
@@ -67,6 +68,7 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   onTap: () {
+                    Navigator.of(context).pop();
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) {
                       return const ImportExportDb();
@@ -75,7 +77,7 @@ class _HomeState extends State<Home> {
                   tileColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.6),
                   title: Text(
-                    "Import / Export Database",
+                    kDatabaseHandleAppBarText,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.background,
                       fontWeight: FontWeight.bold,
@@ -90,13 +92,18 @@ class _HomeState extends State<Home> {
                   height: 16,
                 ),
                 ListTile(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const BookmarkScreen()));
+                  },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   tileColor:
                       Theme.of(context).colorScheme.primary.withOpacity(0.6),
                   title: Text(
-                    "Favorites",
+                    kBookmarkedRecipeAppBarText,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.background,
                       fontWeight: FontWeight.bold,
@@ -223,8 +230,7 @@ class _HomeState extends State<Home> {
                         child: CircularProgressIndicator(),
                       );
                     case Status.success:
-                      List<Recipe> recipes =
-                          snapshot.data?.data ?? [] as List<Recipe>;
+                      List recipes = snapshot.data?.data ?? [];
                       if (recipes.isEmpty) {
                         return Center(
                           child: Text(
@@ -255,7 +261,7 @@ class _HomeState extends State<Home> {
                         ),
                         itemCount: recipes.length,
                         itemBuilder: (context, index) {
-                          return RecipeTile(recipes[index]);
+                          return RecipeTile(recipes[index] as Recipe);
                         },
                       );
                   }

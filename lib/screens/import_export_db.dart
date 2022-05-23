@@ -258,7 +258,7 @@ class _ImportExportDbState extends State<ImportExportDb> {
                                             actions: [
                                               TextButton(
                                                 child: const Text(
-                                                  kDefeatAccpeted,
+                                                  kDefeatAccepted,
                                                 ),
                                                 onPressed: () {
                                                   Navigator.of(context)
@@ -334,7 +334,7 @@ class _ImportExportDbState extends State<ImportExportDb> {
                                             actions: [
                                               TextButton(
                                                 child:
-                                                    const Text(kDefeatAccpeted),
+                                                    const Text(kDefeatAccepted),
                                                 onPressed: () {
                                                   Navigator.of(context)
                                                       .pushAndRemoveUntil(
