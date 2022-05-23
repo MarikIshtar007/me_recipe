@@ -174,12 +174,17 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
                 int response = -1;
                 if (widget.recipe != null) {
-                  Recipe recipe = Recipe(widget.recipe!.id, recipeName,
-                      imageAsBytes, ingredients, procedure);
+                  Recipe recipe = Recipe(
+                      widget.recipe!.id,
+                      recipeName,
+                      imageAsBytes,
+                      ingredients,
+                      procedure,
+                      widget.recipe!.bookmark);
                   response = await viewModel.editRecipe(recipe);
                 } else {
-                  Recipe recipe = Recipe(
-                      0, recipeName, imageAsBytes, ingredients, procedure);
+                  Recipe recipe = Recipe(0, recipeName, imageAsBytes,
+                      ingredients, procedure, false);
                   response = await viewModel.addRecipe(recipe);
                 }
                 Navigator.of(context).pop();

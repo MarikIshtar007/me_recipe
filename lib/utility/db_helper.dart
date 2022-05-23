@@ -37,7 +37,8 @@ class RecipeDatabase {
         $kDbTableTitleColumn TEXT,
         $kDbTableImageColumn BLOB,
         $kDbTableIngredientsColumn TEXT,
-        $kDbTableProcedureColumn TEXT
+        $kDbTableProcedureColumn TEXT,
+        $kDbTableBookmarkedColumn BOOLEAN
         );
         ''');
   }
@@ -162,6 +163,38 @@ class RecipeDatabase {
     } catch (err) {
       debugPrint("Error in merging database: $err");
       return kMethodError;
+    }
+  }
+
+  Future<int> bookmarkRecipe(int recipeId, bool shouldBookmark) async {
+    var client = await db;
+    try {
+      client.rawUpdate(
+          'UPDATE $kRecipeTableName SET $kDbTableBookmarkedColumn = ? where $kDbTableIdColumn = ?',
+          [shouldBookmark, recipeId]);
+      return kMethodSuccess;
+    } catch (err) {
+      debugPrint("Error in bookmarking recipe: $err");
+      return kMethodError;
+    }
+  }
+
+  // Maybe there is a use case where this will be necessary ?
+  Future<Resource> getBookmarkedRecipes() async {
+    var client = await db;
+    try {
+      var res = await client.query(kRecipeTableName,
+          whereArgs: [1], where: "$kDbTableBookmarkedColumn = ?");
+      if (res.isNotEmpty) {
+        var recipes = res.map((e) => Recipe.fromMap(e)).toList();
+        Resource<List<Recipe>> resource =
+            Resource<List<Recipe>>.success(recipes);
+        return resource;
+      }
+      return Resource.success([]);
+    } catch (err) {
+      debugPrint("Error in fetching recipes: $err");
+      return Resource.failure("Error in fetching recipes: $err");
     }
   }
 }
