@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:equatable/equatable.dart';
 import 'package:me_recipe/utility/constants.dart';
 
-class Recipe extends Equatable {
+class Recipe {
   late int id;
   late String title;
   late Uint8List? image;
@@ -13,9 +12,6 @@ class Recipe extends Equatable {
 
   Recipe(this.id, this.title, this.image, this.ingredients, this.procedure,
       this.bookmark);
-
-  @override
-  List<Object?> get props => [id, title];
 
   @override
   String toString() =>

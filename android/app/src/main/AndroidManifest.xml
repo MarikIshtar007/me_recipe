@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.haany.me_recipe">
    <application
-        android:label="me_recipe"
+        android:label="My Recipes"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
