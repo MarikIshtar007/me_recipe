@@ -1,16 +1,19 @@
 # me_recipe
 
-A new Flutter project.
+A Flutter based app that stores recipes locally on the device.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Recipes can be added and edited
+- Recipes can be searched
+- Allows Bookmarking Recipes and looking them up
+- The recipe database can be exported to share with others
+- Recipe databases can be imported to either override local database or merge with it
 
-A few resources to get you started if this is your first Flutter project:
+## Misc
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+The app uses sqflite package to create a sql-based database locally that stores and manages the recipe database. Storing a recipe allows storing its name, picture, ingredients list and procedure. 
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app is a personal project and follows multiple architectures.. because it is fun.... such as MVVM, with the help of the get_it package
+
+**P.S. APK is available in the repositories' release section** 
