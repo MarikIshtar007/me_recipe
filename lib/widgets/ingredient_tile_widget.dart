@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class IngredientTile extends StatelessWidget {
   final List<String> ingredient;
   const IngredientTile(this.ingredient, {Key? key})
-      :
-        assert(ingredient.length == 2),
+      : assert(ingredient.length == 2),
         super(key: key);
 
   @override
