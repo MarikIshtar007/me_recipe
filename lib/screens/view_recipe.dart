@@ -161,7 +161,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   widget.recipe.ingredients.length,
                   (index) {
                     var ingredients = widget.recipe.ingredients[index]
-                        .split(kIngredientSeparator);
+                        .split(kIngredientQuantitySeparator);
                     return IngredientTile(ingredients);
                   },
                 ),

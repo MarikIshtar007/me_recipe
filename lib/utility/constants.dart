@@ -1,5 +1,6 @@
 /// String used throughout the app
 
+const String kAppName = "My Recipes";
 const String kFetchRecipeFailure = "There was an error in fetching the recipes";
 const String kAddRecipeAppBarText = "Add your own Recipe";
 const String kEditRecipeAppBarText = "Edit your Recipe";
@@ -31,7 +32,8 @@ const String kCancelAction = "Cancel";
 // Strings for DB CRUD Ops
 const String kRecipeDatabaseName = "myrecipes.db";
 const String kRecipeTableName = "recipes";
-const String kIngredientSeparator = "*";
+const String kIngredientQuantitySeparator = "*";
+const String kIngredientSeparator = "|";
 const String kDbTableIdColumn = "id";
 const String kDbTableTitleColumn = "title";
 const String kDbTableImageColumn = "image";

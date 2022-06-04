@@ -21,7 +21,7 @@ class Recipe {
     return {
       kDbTableTitleColumn: title,
       kDbTableImageColumn: image,
-      kDbTableIngredientsColumn: ingredients.join("|"),
+      kDbTableIngredientsColumn: ingredients.join(kIngredientSeparator),
       kDbTableProcedureColumn: procedure,
       kDbTableBookmarkedColumn: bookmark
     };
@@ -29,7 +29,7 @@ class Recipe {
 
   static Recipe fromMap(Map<String, dynamic> map) {
     var list = map[kDbTableIngredientsColumn] as String;
-    var ingredientList = list.split("|");
+    var ingredientList = list.split(kIngredientSeparator);
     return Recipe(
         map[kDbTableIdColumn] as int,
         map[kDbTableTitleColumn],

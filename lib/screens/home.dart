@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
                   child: Container(
                     alignment: Alignment.center,
                     child: Text(
-                      "My Recipes",
+                      kAppName,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.background,
                         fontSize: 24,
@@ -128,7 +128,7 @@ class _HomeState extends State<Home> {
             stream: _viewModel.searchStatus,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                if (snapshot.data == SearchStatus.NOT_SEARCHING) {
+                if (snapshot.data == SearchStatus.notSearching) {
                   return Container(
                     padding: const EdgeInsets.only(
                       bottom: 3, // space between underline and text
@@ -176,7 +176,7 @@ class _HomeState extends State<Home> {
                 stream: _viewModel.searchStatus,
                 builder: (context, AsyncSnapshot<SearchStatus> snapshot) {
                   if (snapshot.data != null) {
-                    if (snapshot.data == SearchStatus.SEARCHING) {
+                    if (snapshot.data == SearchStatus.searching) {
                       return Icon(
                         Icons.close_rounded,
                         color: Theme.of(context).colorScheme.secondary,

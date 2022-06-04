@@ -28,7 +28,18 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,
-          title: const Text(kBookmarkedRecipeAppBarText),
+          title: Row(
+            children: [
+              const Text(kBookmarkedRecipeAppBarText),
+              const SizedBox(
+                width: 16,
+              ),
+              Icon(
+                Icons.bookmark,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            ],
+          ),
           elevation: 0.0,
         ),
         body: Container(

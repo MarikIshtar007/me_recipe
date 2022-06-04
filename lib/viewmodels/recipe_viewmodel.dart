@@ -5,23 +5,23 @@ import 'package:me_recipe/utility/db_helper.dart';
 import 'package:me_recipe/utility/resource.dart';
 import 'package:rxdart/rxdart.dart';
 
-enum SearchStatus { SEARCHING, NOT_SEARCHING }
+enum SearchStatus { searching, notSearching }
 
 class RecipeViewModel {
   final BehaviorSubject<Resource> _recipes =
       BehaviorSubject.seeded(Resource.loading());
+  BehaviorSubject<Resource> get recipes => _recipes;
 
   final BehaviorSubject<Resource> _bookmarkedRecipes =
       BehaviorSubject.seeded(Resource.loading());
-
-  final BehaviorSubject<SearchStatus> _searchStatus =
-      BehaviorSubject.seeded(SearchStatus.NOT_SEARCHING);
-
-  BehaviorSubject<SearchStatus> get searchStatus => _searchStatus;
-  BehaviorSubject<Resource> get recipes => _recipes;
   BehaviorSubject<Resource> get bookmarkedRecipes => _bookmarkedRecipes;
 
-  SearchStatus _localSearchStatus = SearchStatus.NOT_SEARCHING;
+  final BehaviorSubject<SearchStatus> _searchStatus =
+      BehaviorSubject.seeded(SearchStatus.notSearching);
+  BehaviorSubject<SearchStatus> get searchStatus => _searchStatus;
+
+  SearchStatus _localSearchStatus = SearchStatus.notSearching;
+
   final List<Recipe> _recipeSearchSnapshot = [];
   final List<Recipe> _importedRecipes = [];
 
@@ -36,11 +36,11 @@ class RecipeViewModel {
   }
 
   void toggleSearch() {
-    if (_localSearchStatus == SearchStatus.NOT_SEARCHING) {
-      _localSearchStatus = SearchStatus.SEARCHING;
+    if (_localSearchStatus == SearchStatus.notSearching) {
+      _localSearchStatus = SearchStatus.searching;
       _recipeSearchSnapshot.addAll(_recipes.value.data);
     } else {
-      _localSearchStatus = SearchStatus.NOT_SEARCHING;
+      _localSearchStatus = SearchStatus.notSearching;
       getRecipes();
       _recipeSearchSnapshot.clear();
     }
@@ -48,7 +48,7 @@ class RecipeViewModel {
   }
 
   bool isSearching() {
-    return _localSearchStatus == SearchStatus.SEARCHING;
+    return _localSearchStatus == SearchStatus.searching;
   }
 
   void searchRecipes(String queryText) {

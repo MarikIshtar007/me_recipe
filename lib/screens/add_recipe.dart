@@ -44,14 +44,14 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       imageBytes = recipe.image;
       recipeNameController.text = recipe.title;
       for (var ingredient in recipe.ingredients) {
-        List<String> splitIngredients = ingredient.split(kIngredientSeparator);
+        List<String> splitIngredients =
+            ingredient.split(kIngredientQuantitySeparator);
         ingredientControllers.add(IngredientControllers(
           TextEditingController()..text = splitIngredients.first,
           TextEditingController()..text = splitIngredients.last,
         ));
       }
       procedureController.text = recipe.procedure;
-      debugPrint("The recipe being edited is: $recipe");
     } else {
       ingredientControllers.add(IngredientControllers(
           TextEditingController(), TextEditingController()));
@@ -168,7 +168,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 List<String> ingredients = [];
                 for (var controller in ingredientControllers) {
                   ingredients.add(
-                      "${controller.name.text}$kIngredientSeparator${controller.quantity.text}");
+                      "${controller.name.text}$kIngredientQuantitySeparator${controller.quantity.text}");
                 }
                 String procedure = procedureController.text;
 

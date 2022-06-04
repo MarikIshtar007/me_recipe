@@ -4,7 +4,7 @@ class IngredientTile extends StatelessWidget {
   final List<String> ingredient;
   const IngredientTile(this.ingredient, {Key? key})
       :
-        // assert(ingredient.length == 2),
+        assert(ingredient.length == 2),
         super(key: key);
 
   @override
@@ -31,7 +31,7 @@ class IngredientTile extends StatelessWidget {
               ),
               alignment: Alignment.bottomLeft,
               child: CustomPaint(
-                  child: Container(), painter: DrawDottedhorizontalline()),
+                  child: Container(), painter: DrawDottedHorizontalLine()),
             ),
           ),
           Text(
@@ -47,9 +47,9 @@ class IngredientTile extends StatelessWidget {
   }
 }
 
-class DrawDottedhorizontalline extends CustomPainter {
+class DrawDottedHorizontalLine extends CustomPainter {
   late Paint _paint;
-  DrawDottedhorizontalline() {
+  DrawDottedHorizontalLine() {
     _paint = Paint();
     _paint.color = const Color(0xFF356859);
     _paint.strokeWidth = 2; //dots thickness
@@ -58,8 +58,6 @@ class DrawDottedhorizontalline extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double width = size.width;
-    print(width);
     for (double i = 0; i < size.width; i = i + 5) {
       canvas.drawLine(Offset(i, 0.0), Offset(i + 1, 0.0), _paint);
     }
