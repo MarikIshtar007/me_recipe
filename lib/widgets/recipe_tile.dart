@@ -73,6 +73,7 @@ class RecipeTile extends StatelessWidget {
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             alignment: Alignment.bottomCenter,
@@ -89,14 +90,14 @@ class RecipeTile extends StatelessWidget {
               ),
             ),
           ),
-          Divider(
-            thickness: 1.0,
-            color: Theme.of(context).colorScheme.primary,
+          const SizedBox(
+            height: 12,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               recipe.title,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: Theme.of(context).textTheme.headline6?.fontSize,
                 color: Theme.of(context).colorScheme.secondary,
@@ -104,10 +105,6 @@ class RecipeTile extends StatelessWidget {
               ),
             ),
           ),
-          Divider(
-            thickness: 1.0,
-            color: Theme.of(context).colorScheme.primary,
-          )
         ],
       ),
     );
