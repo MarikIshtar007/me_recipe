@@ -67,8 +67,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       child: TextField(
         controller: textEditingController,
         inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z ]")),
+          FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z/. ]")),
         ],
+        textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           label: Text(label),
           hintText: "Add $label",
@@ -267,6 +268,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   width: size.width,
                   child: ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: ingredientControllers.length,
                     itemBuilder: (context, index) {
                       return buildIngredientCard(
