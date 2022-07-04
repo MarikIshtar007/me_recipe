@@ -5,6 +5,7 @@ import 'package:me_recipe/utility/constants.dart';
 import 'package:me_recipe/utility/get_it_locator.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   runApp(const MyApp());
 }

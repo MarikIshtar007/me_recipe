@@ -11,6 +11,7 @@ const String kEmptyRecipeList =
     "So empty...\n\nAdd your recipes and get started !!";
 const String kEmptyRecipeSearchResult = "No matching results";
 const String kDatabaseHandleAppBarText = "Import or Export Database";
+const String kSendFeedbackAppBarText = "Send Feedback";
 const String kImportDatabaseText = "Import Someone's shared recipes";
 const String kExportDatabaseText = "Share your recipe database with others";
 const String kImportDatabaseButtonText = "Import Recipes";
@@ -28,6 +29,10 @@ const String kDefeatTitle = "Well well...";
 const String kMergeFailureText =
     "Merge failed. Don't blame me if the data is corrupted";
 const String kCancelAction = "Cancel";
+const String kFeedbackTitleEmptyError = "Please add a title";
+const String kFeedbackDescriptionEmptyError = "Please add a description";
+
+const String kFeedbackMail = "asterp04+me_recipe@gmail.com";
 
 // Strings for DB CRUD Ops
 const String kRecipeDatabaseName = "myrecipes.db";

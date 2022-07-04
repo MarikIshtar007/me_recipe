@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:me_recipe/models/recipe.dart';
 import 'package:me_recipe/screens/add_recipe.dart';
-import 'package:me_recipe/screens/bookmarks.dart';
-import 'package:me_recipe/screens/import_export_db.dart';
 import 'package:me_recipe/utility/constants.dart';
 import 'package:me_recipe/utility/get_it_locator.dart';
 import 'package:me_recipe/utility/resource.dart';
+import 'package:me_recipe/utility/secrets.dart';
+import 'package:me_recipe/viewmodels/ad_state_viewmodel.dart';
 import 'package:me_recipe/viewmodels/recipe_viewmodel.dart';
+import 'package:me_recipe/widgets/drawer_widget.dart';
 import 'package:me_recipe/widgets/recipe_tile.dart';
 
 class Home extends StatefulWidget {
@@ -20,7 +22,25 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final RecipeViewModel _viewModel = locator<RecipeViewModel>();
+  final AdState _adState = locator<AdState>();
   Timer? _debounce;
+
+  AdWithView? adWithView;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _adState.initialization.then((value) {
+      setState(() {
+        adWithView = BannerAd(
+            adUnitId: adMobBannerID,
+            size: AdSize.banner,
+            request: AdRequest(),
+            listener: _adState.adListener)
+          ..load();
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -39,85 +59,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: Drawer(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListView(
-              children: [
-                DrawerHeader(
-                  padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
-                  margin: const EdgeInsets.only(bottom: 16.0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      kAppName,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.background,
-                        fontSize: 24,
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return const ImportExportDb();
-                    }));
-                  },
-                  tileColor:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.6),
-                  title: Text(
-                    kDatabaseHandleAppBarText,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.background,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  trailing: Icon(
-                    Icons.data_exploration_outlined,
-                    color: Theme.of(context).colorScheme.background,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                ListTile(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const BookmarkScreen()));
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  tileColor:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.6),
-                  title: Text(
-                    kBookmarkedRecipeAppBarText,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.background,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  trailing: Icon(
-                    Icons.bookmark_outline,
-                    color: Theme.of(context).colorScheme.background,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        drawer: const DrawerWidget(),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -198,92 +140,114 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
-        body: GestureDetector(
-          onTap: () {
-            if (FocusManager.instance.primaryFocus?.hasFocus ?? false) {
-              FocusManager.instance.primaryFocus?.unfocus();
-              if (_viewModel.isSearching()) {
-                _viewModel.toggleSearch();
-              }
-            }
-          },
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-            child: StreamBuilder<Resource>(
-              stream: _viewModel.recipes,
-              builder: (context, AsyncSnapshot<Resource> snapshot) {
-                if (snapshot.data != null) {
-                  Status status = snapshot.data?.status ?? Status.failed;
-                  switch (status) {
-                    case Status.failed:
-                      return Center(
-                        child: Text(
-                          snapshot.data?.errorMessage ?? kSomethingWentWrong,
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                      );
-                    case Status.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case Status.success:
-                      List recipes = snapshot.data?.data ?? [];
-                      if (recipes.isEmpty) {
-                        return Center(
-                          child: Text(
-                            _viewModel.isSearching()
-                                ? kEmptyRecipeSearchResult
-                                : kEmptyRecipeList,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              letterSpacing: 0.8,
-                              fontStyle: FontStyle.italic,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .headline5
-                                  ?.fontSize,
-                            ),
-                          ),
-                        );
-                      }
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 0.0,
-                          crossAxisSpacing: 10.0,
-                          childAspectRatio: 0.6,
-                        ),
-                        itemCount: recipes.length,
-                        itemBuilder: (context, index) {
-                          return RecipeTile(recipes[index] as Recipe);
-                        },
-                      );
+        body: Column(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  if (FocusManager.instance.primaryFocus?.hasFocus ?? false) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (_viewModel.isSearching()) {
+                      _viewModel.toggleSearch();
+                    }
                   }
-                } else {
-                  return const Text("Something went really really wrong");
-                }
-              },
-            ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(
-            Icons.add,
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          onPressed: () async {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const AddRecipeScreen(),
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 15.0),
+                  child: StreamBuilder<Resource>(
+                    stream: _viewModel.recipes,
+                    builder: (context, AsyncSnapshot<Resource> snapshot) {
+                      if (snapshot.data != null) {
+                        Status status = snapshot.data?.status ?? Status.failed;
+                        switch (status) {
+                          case Status.failed:
+                            return Center(
+                              child: Text(
+                                snapshot.data?.errorMessage ??
+                                    kSomethingWentWrong,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            );
+                          case Status.loading:
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          case Status.success:
+                            List recipes = snapshot.data?.data ?? [];
+                            if (recipes.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  _viewModel.isSearching()
+                                      ? kEmptyRecipeSearchResult
+                                      : kEmptyRecipeList,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    letterSpacing: 0.8,
+                                    fontStyle: FontStyle.italic,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .headline5
+                                        ?.fontSize,
+                                  ),
+                                ),
+                              );
+                            }
+                            return GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 0.0,
+                                crossAxisSpacing: 10.0,
+                                childAspectRatio: 0.6,
+                              ),
+                              itemCount: recipes.length,
+                              itemBuilder: (context, index) {
+                                return RecipeTile(recipes[index] as Recipe);
+                              },
+                            );
+                        }
+                      } else {
+                        return const Text("Something went really really wrong");
+                      }
+                    },
+                  ),
+                ),
               ),
-            );
-          },
+            ),
+            if (adWithView == null)
+              const SizedBox(
+                height: 50,
+              )
+            else
+              SizedBox(
+                height: 50,
+                child: AdWidget(
+                  ad: adWithView!,
+                ),
+              )
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 50.0),
+          child: FloatingActionButton(
+            child: Icon(
+              Icons.add,
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
+            onPressed: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const AddRecipeScreen(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

@@ -300,7 +300,9 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: TextField(
                     minLines: 4,
                     maxLines: 8,
