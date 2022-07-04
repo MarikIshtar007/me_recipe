@@ -9,19 +9,26 @@ class IngredientTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         textBaseline: TextBaseline.alphabetic,
         textDirection: TextDirection.ltr,
         children: [
-          Text(
-            ingredient.first,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 18,
+          Flexible(
+            flex: 2,
+            child: Text(
+              ingredient.first,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 18,
+              ),
             ),
           ),
           Expanded(
+            flex: 5,
             child: Container(
               padding: const EdgeInsets.only(
                 top: 12,
@@ -35,6 +42,7 @@ class IngredientTile extends StatelessWidget {
           ),
           Text(
             ingredient.last,
+            textAlign: TextAlign.end,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
               fontSize: 18,
