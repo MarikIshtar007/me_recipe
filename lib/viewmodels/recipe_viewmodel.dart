@@ -55,7 +55,7 @@ class RecipeViewModel {
     if (_recipes.hasValue) {
       List<Recipe> searchResult = [];
       for (var recipe in _recipeSearchSnapshot) {
-        if (recipe.title.contains(queryText)) {
+        if (recipe.title.toLowerCase().contains(queryText.toLowerCase())) {
           searchResult.add(recipe);
         }
       }

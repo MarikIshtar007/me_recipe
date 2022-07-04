@@ -1,4 +1,4 @@
-/// String used throughout the app
+/// Strings used throughout the app
 
 const String kAppName = "My Recipes";
 const String kFetchRecipeFailure = "There was an error in fetching the recipes";
